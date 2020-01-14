@@ -9,3 +9,6 @@ It pass througth several steps:
 3) Find best autocovariance crosscovariance model (Intcor)
 4) Apply collocation filtering (collo-t/p/s)
 5) Estrapolate componente taking into account solution of collocation
+
+Note not all programs present in this repository are need
+some are derive from original code for specific task (e.g. collo-p-SAR...)
