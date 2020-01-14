@@ -1,0 +1,827 @@
+C******************************     ADIACE
+      SUBROUTINE ADIACE (NUMERO,INDIR,JCRONA,JGRAFO,LIVELW,LIV,
+     .IPUNT,INFORM,IP,IC,IN,N,IS)
+      DIMENSION NUMERO(1),INDIR(1),JCRONA(1),JGRAFO(1),
+     .LIVELW(1),IPUNT(1),INFORM(1)
+    1 IP=IP+1
+      L=INDIR(IP)
+      L1=JCRONA(L)
+      L2=JCRONA(L+1)-1
+      J=0
+      DO 10 I=L1,L2
+      L=JGRAFO(I)
+      IF(LIVELW(L).NE.LIV.OR.NUMERO(L).NE.0) GO TO 10
+      J=J+1
+      IPUNT(J)=L
+      INFORM(L)=JCRONA(L+1)-JCRONA(L)
+   10 CONTINUE
+      NL=J
+      IF(NL.NE.0) THEN
+      CALL RIORDI(INFORM,IPUNT,NL,N,1)
+      DO 20 I=1,NL
+      IN=IN+1
+      L=IPUNT(I)
+      NUMERO(L)=IN
+      INDIR(IN)=L
+   20 CONTINUE
+      ENDIF
+      IF(IP.LT.IS*IC+(1-IS)*IN) GO TO 1
+      RETURN
+      END
+C******************************     BANDA
+      SUBROUTINE BANDA(INDICI,KRIGA,IBANDA,JBANDA,
+     .MMAX,M,N,IT,JT,LB)
+      DIMENSION INDICI(MMAX,1),KRIGA(1),IBANDA(1),JBANDA(1)
+      DO 1 I=1,N
+      IBANDA(I)=0
+      JBANDA(I)=0
+    1 CONTINUE
+      DO 5 I=1,M
+      L=KRIGA(I)
+      LL=1000000000
+      DO 2 J=1,L
+      LL=MIN0(LL,INDICI(I,J))
+    2 CONTINUE
+      IF(LL.LT.0) GO TO 5
+      DO 3 J1=1,L
+      K=INDICI(I,J1)
+      DO 3 J2=1,L
+      IBANDA(K)=MAX0(IBANDA(K),K-INDICI(I,J2))
+      JBANDA(K)=MAX0(JBANDA(K),INDICI(I,J2)-K)
+    3 CONTINUE
+    5 CONTINUE
+      IT=N
+      JT=N
+      LB=0
+      DO 10 I=1,N
+      IT=IT+IBANDA(I)
+      JT=JT+JBANDA(I)
+      LB=MAX0(LB,IBANDA(I))
+   10 CONTINUE
+      RETURN
+      END
+C******************************     BINARY
+          SUBROUTINE BINARY(IVALRE,INFORM,IPUNT,NMAX,LNINF,LNSUP,
+     .    LPINF,LPSUP,N)
+          DIMENSION INFORM(1),IPUNT(1)
+          LPINF=0
+          LPSUP=0
+          LNINF=0
+          LNSUP=0
+          NI=1
+          NF=N
+          IPUNT(N+1)=NMAX
+          INFORM(NMAX)=100000000
+          LI=IPUNT(NI)
+          LF=IPUNT(NF)
+          IF(IVALRE.LT.INFORM(LI)) THEN
+          LPINF=0
+          LPSUP=1
+          LNINF=0
+          LNSUP=IPUNT(1)
+          IPUNT(N+1)=0
+          INFORM(NMAX)=0
+          RETURN
+          ENDIF
+          IF(IVALRE.GT.INFORM(LF)) THEN
+          LPINF=N
+          LPSUP=N+1
+          LNINF=IPUNT(N)
+          LNSUP=NMAX+1
+          IPUNT(N+1)=0
+          INFORM(NMAX)=0
+          RETURN
+          ENDIF
+          NF=NF+1
+5         NC=(NI+NF)/2
+          LC=IPUNT(NC)
+          IF(IVALRE.EQ.INFORM(LC)) THEN
+          DO 10 I=NC,NF
+          L=IPUNT(I)
+          IF(IVALRE.NE.INFORM(L)) GO TO 12
+          LPSUP=I
+          LNSUP=IPUNT(I)
+10        CONTINUE
+12        DO 15 I=NC,NI,-1
+          L=IPUNT(I)
+          IF(IVALRE.NE.INFORM(L)) GO TO 18
+          LPINF=I
+          LNINF=IPUNT(I)
+15        CONTINUE
+18        IPUNT(N+1)=0
+          INFORM(NMAX)=0
+          RETURN
+          ENDIF
+          IF((NF-NI).LE.1) THEN
+          LPINF=NI
+          LPSUP=NF
+          LNINF=IPUNT(NI)
+          LNSUP=IPUNT(NF)
+          IPUNT(N+1)=0
+          INFORM(NMAX)=0
+          RETURN
+          ENDIF
+          IF(IVALRE.LT.INFORM(LC)) THEN
+          NF=NC
+          ENDIF
+          IF(IVALRE.GT.INFORM(LC)) THEN
+          NI=NC
+          ENDIF
+          GOTO 5
+          END
+C******************************     CLASSI
+      SUBROUTINE CLASSI(INFORM,KONT,IPUNT,M,N)
+      DIMENSION INFORM(1),KONT(1),IPUNT(1)
+      DO 1 I=1,N
+      KONT(I+1)=0
+    1 CONTINUE
+      KONT(1)=0
+      DO 5 I=1,M
+      K=INFORM(I)
+      IF(K.NE.0) THEN
+      KONT(K+1)=KONT(K+1)+1
+      ENDIF
+    5 CONTINUE
+      DO 10 I=1,N
+      KONT(I+1)=KONT(I)+KONT(I+1)
+   10 CONTINUE
+      DO 15 I=1,M
+      K1=INFORM(I)
+      IF(K1.NE.0) THEN
+      KONT(K1)=KONT(K1)+1
+      K2=KONT(K1)
+      IPUNT(K2)=I
+      ENDIF
+   15 CONTINUE
+      DO 20 I=N,1,-1
+      KONT(I+1)=KONT(I)
+   20 CONTINUE
+      KONT(1)=0
+      RETURN
+      END
+C******************************     CONNEX
+      SUBROUTINE CONNEX(JCRONA,JGRAFO,LIVEL,LIPRIM,LIULT,NOME,N)
+      DIMENSION JCRONA(1),JGRAFO(1),LIVEL(1),LIPRIM(1),LIULT(1),NOME(1)
+      DO 5 I=1,N
+      LIVEL(I)=0
+    5 CONTINUE
+      IL=1
+      LIV=1
+      LIVEL(1)=1
+      LIPRIM(1)=1
+      NU=1
+   10 LIV=LIV+1
+      IN=0
+      DO 20 I=1,NU
+      K=LIPRIM(I)
+      L1=JCRONA(K)
+      L2=JCRONA(K+1)-1
+      DO 20 J=L1,L2
+      L=JGRAFO(J)
+      IF(LIVEL(L).NE.0) GO TO 20
+      IN=IN+1
+      LIVEL(L)=LIV
+      LIULT(IN)=L
+   20 CONTINUE
+      IF(IN.EQ.0) GO TO 40
+      IL=IL+IN
+      NU=IN
+      DO 30 I=1,NU
+      LIPRIM(I)=LIULT(I)
+   30 CONTINUE
+      GO TO 10
+   40 IF(IL.LT.N) GO TO 50
+      RETURN
+   50 ILI=NOME(N+1)
+      IF(ILI.EQ.1) THEN
+      WRITE(6,100)
+      ELSE
+      WRITE(6,101)
+      ENDIF
+      DO 60 I=1,N,20
+      I1=I
+      I2=MIN0(N,I+19)
+      WRITE(6,120) (J,J=I1,I2)
+      WRITE(6,120) (NOME(J),J=I1,I2)
+      WRITE(6,120) (LIVEL(J),J=I1,I2)
+      WRITE(6,110)
+   60 CONTINUE
+      STOP
+  100 FORMAT(///5X,'GRAFO NON CONNESSO'///)
+  101 FORMAT(///5X,'NO PATH IN THE GRAPH'///)
+  110 FORMAT(/)
+  120 FORMAT(5X,20I5)
+      END
+C******************************     DIAME
+      SUBROUTINE DIAME(JCRONA,JGRAFO,LIVELV,LIVELU,LIPRIM,LIULT,LIVLT,
+     .ISRV,LIMAX,KAVMAX,KAUMAX,INI,IFI,NN,N)
+      DIMENSION JCRONA(1),JGRAFO(1),LIVELV(1),LIVELU(1),LIPRIM(1),LIULT(
+     .1),LIVLT(1),ISRV(1)
+      L=1000000000
+      INI=0
+      DO 10 I=1,N
+      KRONA=JCRONA(I+1)-JCRONA(I)
+      IF(KRONA.GE.L.OR.KRONA.EQ.1) GO TO 10
+      L=KRONA
+      INI=I
+   10 CONTINUE
+      IF(INI.EQ.0) RETURN
+      CALL LIVEL(INI,JCRONA,JGRAFO,LIVELV,LIPRIM,LIULT,0,
+     .LIVMAX,KAVMAX,NV,NN,N)
+      IF(NV.NE.1) THEN
+      DO 15 I=1,NV
+      J=LIULT(I)
+      ISRV(J)=JCRONA(J+1)-JCRONA(J)
+   15 CONTINUE
+      CALL RIORDI(ISRV,LIULT,NV,N,1)
+      ENDIF
+   20 DO 25 I=1,NV
+      LIVLT(I)=LIULT(I)
+   25 CONTINUE
+      L=N
+      DO 30 I=1,NV
+      K=LIVLT(I)
+      CALL LIVEL(K,JCRONA,JGRAFO,LIVELU,LIPRIM,LIULT,0,
+     .LIUMAX,KAUMAX,NU,NN,N)
+      IF(NU.NE.1) THEN
+      DO 28 IS=1,NU
+      J=LIULT(IS)
+      ISRV(J)=JCRONA(J+1)-JCRONA(J)
+   28 CONTINUE
+      CALL RIORDI(ISRV,LIULT,NU,N,1)
+      ENDIF
+      IF(LIUMAX.GT.LIVMAX) GO TO 40
+      IF(L.LE.KAUMAX) GO TO 30
+      L=KAUMAX
+      IFI=K
+   30 CONTINUE
+      CALL LIVEL(IFI,JCRONA,JGRAFO,LIVELU,LIPRIM,LIULT,0,
+     .LIUMAX,KAUMAX,NU,NN,N)
+      LIMAX=LIUMAX
+      IF(NU.NE.1) THEN
+      DO 35 I=1,NU
+      J=LIULT(I)
+      ISRV(J)=JCRONA(J+1)-JCRONA(J)
+   35 CONTINUE
+      CALL RIORDI(ISRV,LIULT,NU,N,1)
+      ENDIF
+      RETURN
+   40 INI=K
+      LIVMAX=LIUMAX
+      KAVMAX=KAUMAX
+      NV=NU
+      DO 50 I=1,N
+      LIVELV(I)=LIVELU(I)
+   50 CONTINUE
+      GO TO 20
+      END
+C******************************     GIBBS
+      SUBROUTINE GIBBS(NUMERO,INDIR,JCRONA,JGRAFO,IA,IB,IC,ID,IE,IF,IG,
+     .N)
+      DIMENSION NUMERO(1),INDIR(1),JCRONA(1),JGRAFO(1),IA(1),IB(1),
+     .IC(1),ID(1),IE(1),IF(1),IG(1)
+      CALL DIAME(JCRONA,JGRAFO,IA,IB,IC,ID,IE,IF,LIMAX,KAVMAX,
+     .KAUMAX,INI,IFI,NN,N)
+      IF(INI.NE.0) THEN
+      CALL RIDUCE(JCRONA,JGRAFO,IA,IB,IC,ID,IE,IF,IG,NUMERO,INDIR,
+     .LIMAX,KAVMAX,KAUMAX,ISC,NN,N)
+      CALL MEGLIO(NUMERO,INDIR,JCRONA,JGRAFO,IC,IA,IB,ID,IE,INI,IFI,
+     .LIMAX,ISC,NN,N)
+      ELSE
+      DO 10 I=1,N
+      NUMERO(I)=I
+      INDIR(I)=I
+   10 CONTINUE
+      ENDIF
+      RETURN
+      END
+C******************************     LISTA
+          SUBROUTINE LISTA(NPUNTO,NUMERO,KO,LS,N)
+          IMPLICIT DOUBLE PRECISION(A-H,O-Z)
+          DIMENSION NPUNTO(1),NUMERO(1)
+          DO 1 I=1,N
+          K=NPUNTO(I)
+          IF(K.EQ.0) GO TO 1
+          IND=(K-KO)/LS
+          NPUNTO(I)=NUMERO(IND)
+1         CONTINUE
+          RETURN
+          END
+          SUBROUTINE PUNTA(NPUNTO,LPUNTO,KO,LS,N,NN)
+          DIMENSION LPUNTO(1),NPUNTO(1)
+          DO 5 I=1,NN
+          LPUNTO(I)=0
+5         CONTINUE
+          DO 10 I=1,N
+          J=NPUNTO(I)
+          IF(J.EQ.0) GO TO 10
+          IND=(J-KO)/LS
+          LPUNTO(IND)=I
+10        CONTINUE
+          RETURN
+          END
+C******************************     LIVEL
+      SUBROUTINE LIVEL(INI,JCRONA,JGRAFO,LIVELW,LIPRIM,LIULT,LI0,
+     .LIV,KAMAX,NU,NN,N)
+      DIMENSION JCRONA(1),JGRAFO(1),LIVELW(1),LIPRIM(1),LIULT(1)
+      IF(LI0.EQ.0)THEN
+      DO 1 I=1,N
+      LIVELW(I)=0
+    1 CONTINUE
+      LIV=1
+      ELSE
+      LIV=LI0+1
+      ENDIF
+      LIVELW(INI)=LIV
+      LIPRIM(1)=INI
+      NU=1
+      NN=1
+      KAMAX=1
+   10 LIV=LIV+1
+      IN=0
+      DO 20 I=1,NU
+      K=LIPRIM(I)
+      L1=JCRONA(K)
+      L2=JCRONA(K+1)-1
+      DO 20 J=L1,L2
+      L=JGRAFO(J)
+      IF(LIVELW(L).EQ.0) THEN
+      IN=IN+1
+      IF(KAMAX.LT.NU) KAMAX=NU
+      LIVELW(L)=LIV
+      LIULT(IN)=L
+      ENDIF
+   20 CONTINUE
+      IF(IN.EQ.0) THEN
+      LIV=LIV-1
+      RETURN
+      ENDIF
+      NU=IN
+      NN=NN+IN
+      DO 30 I=1,NU
+      LIPRIM(I)=LIULT(I)
+   30 CONTINUE
+      GO TO 10
+      END
+C******************************     MEGLIO
+      SUBROUTINE MEGLIO(NUMERO,INDIR,JCRONA,JGRAFO,LIVELW,KLIVEL,JLIVEL,
+     .IPUNT,INFORM,INI,IFI,LIMAX,ISC,NN,N)
+      DIMENSION NUMERO(1),INDIR(1),JCRONA(1),JGRAFO(1),LIVELW(1),
+     .KLIVEL(1),JLIVEL(1),IPUNT(1),INFORM(1)
+      JSC=0
+      KRONA=JCRONA(INI+1)-JCRONA(INI)
+      LRONA=JCRONA(IFI+1)-JCRONA(IFI)
+      IF(KRONA.GT.LRONA) THEN
+      DO 10 I=1,N
+      LIV=LIVELW(I)
+      IF(LIV.LE.LIMAX) LIVELW(I)=LIMAX+1-LIV
+   10 CONTINUE
+      INI=IFI
+      JSC=1
+      ENDIF
+      CALL CLASSI (LIVELW,KLIVEL,JLIVEL,N,LIMAX)
+      DO 20 I=1,N
+      NUMERO(I)=0
+      INDIR(I)=0
+   20 CONTINUE
+      LIV=1
+      NUMERO(INI)=1
+      INDIR(1)=INI
+      IN=1
+      IL=0
+      IK=0
+   30 CALL ADIACE (NUMERO,INDIR,JCRONA,JGRAFO,LIVELW,LIV,IPUNT,INFORM,
+     .IL,IN,IN,N,0)
+      K1=KLIVEL(LIV)+1
+      K2=KLIVEL(LIV+1)
+      J=0
+      DO 40 I=K1,K2
+      L=JLIVEL(I)
+      IF(NUMERO(L).NE.0) GO TO 40
+      J=J+1
+      IPUNT(J)=L
+      INFORM(L)=JCRONA(L+1)-JCRONA(L)
+   40 CONTINUE
+      NL=J
+      IF(NL.NE.0) THEN
+      CALL RIORDI(INFORM,IPUNT,NL,N,1)
+      IN=IN+1
+      L=IPUNT(1)
+      NUMERO(L)=IN
+      INDIR(IN)=L
+      GO TO 30
+      ELSE
+      IF(LIV.EQ.LIMAX) GO TO 50
+      LIV=LIV+1
+      CALL ADIACE (NUMERO,INDIR,JCRONA,JGRAFO,LIVELW,LIV,IPUNT,INFORM,
+     .IK,IL,IN,N,1)
+      GO TO 30
+      ENDIF
+   50 IN=NN
+      DO 60 I=1,N
+      IF(LIVELW(I).LE.LIMAX) GO TO 60
+      IN=IN+1
+      NUMERO(I)=IN
+      INDIR(IN)=I
+   60 CONTINUE
+      IF(ISC.NE.JSC) RETURN
+      NN2=NN/2
+      DO 70 I=1,NN2
+      ISRV=INDIR(I)
+      INDIR(I)=INDIR(NN+1-I)
+      INDIR(NN+1-I)=ISRV
+   70 CONTINUE
+      DO 80 I=1,N
+      IF(LIVELW(I).GT.LIMAX) GO TO 80
+      L=NUMERO(I)
+      NUMERO(I)=NN+1-L
+   80 CONTINUE
+      RETURN
+      END
+C******************************     NORMAS
+      SUBROUTINE NORMAS(IGRAFO,ICRONA,JGRAFO,JCRONA,INDICI,KRIGA,
+     .IBANDA,JBANDA,KGRAFO,MMAX,N)
+      DIMENSION IGRAFO(1),ICRONA(1),JGRAFO(1),JCRONA(1),INDICI(MMAX,1),
+     .KRIGA(1),IBANDA(1),JBANDA(1),KGRAFO(1)
+      DO 1 I=1,N
+      KGRAFO(I)=0
+    1 CONTINUE
+      KCOLL=0
+      JCRONA(1)=1
+      DO 40 I=1,N
+      I1=ICRONA(I)+1
+      I2=ICRONA(I+1)
+      IF(I1.LE.I2) THEN
+      DO 10 J=I1,I2
+      MISURA=IGRAFO(J)
+      LL=KRIGA(MISURA)
+      DO 10 L=1,LL
+      NCOLL=INDICI(MISURA,L)
+      KGRAFO(NCOLL)=NCOLL
+   10 CONTINUE
+      JMIN=I-IBANDA(I)
+      JMAX=I+JBANDA(I)
+      DO 20 J=JMIN,JMAX
+      IF(KGRAFO(J).EQ.0) GOTO 20
+      KCOLL=KCOLL+1
+      JGRAFO(KCOLL)=J
+   20 CONTINUE
+      JCRONA(I+1)=KCOLL+1
+      DO 30 J=JMIN,JMAX
+      KGRAFO(J)=0
+   30 CONTINUE
+      ELSE
+      KCOLL=KCOLL+1
+      JGRAFO(KCOLL)=I
+      JCRONA(I+1)=KCOLL+1
+      ENDIF
+   40 CONTINUE
+      RETURN
+      END
+C******************************     NUMERA
+      SUBROUTINE NUMERA(INDICI,KRIGA,KO,LS,NOME,NUMERO,
+     .ISRV,MMAX,NPTMAX,M,N)
+      DIMENSION INDICI(MMAX,1),KRIGA(1),NOME(1),NUMERO(1),
+     .ISRV(1)
+      DO 1 I=1,NPTMAX
+      NOME(I)=0
+      NUMERO(I)=0
+    1 CONTINUE
+      NPT=0
+      DO 10 I=1,M
+      L=KRIGA(I)
+      DO 5 J=1,L
+      K=INDICI(I,J)
+      IF(K.LT.0) GO TO 5
+      IND=(K-KO)/LS
+      NOME(IND)=K
+      NPT=MAX0(NPT,IND)
+    5 CONTINUE
+   10 CONTINUE
+      J=0
+      DO 20 I=1,NPT
+      IF(NOME(I).EQ.0) GO TO 20
+      J=J+1
+      NUMERO(I)=J
+      NOME(J)=NOME(I)
+   20 CONTINUE
+      N=J
+      GO TO 30
+      ENTRY RINUME(INDICI,KRIGA,KO,LS,NOME,NUMERO,
+     .ISRV,MMAX,M,N)
+      IF(N.EQ.0) GO TO 30
+      DO 22 I=1,N
+      L=NUMERO(I)
+      ISRV(L)=NOME(I)
+   22 CONTINUE
+      DO 25 I=1,N
+      NOME(I)=ISRV(I)
+   25 CONTINUE
+   30 DO 50 I=1,M
+      L=KRIGA(I)
+      DO 40 J=1,L
+      K=INDICI(I,J)
+      IF(K.LT.0) GO TO 40
+      IND=(K-KO)/LS
+      INDICI(I,J)=NUMERO(IND)
+   40 CONTINUE
+   50 CONTINUE
+      RETURN
+      END
+C******************************     ORDINI
+          SUBROUTINE ORDINI(INFORM,IPUNT,N,ISGN)
+          DIMENSION INFORM(1),IPUNT(1)
+          NS=N
+          DO 1 I=1,N
+          IPUNT(I)=I
+1         CONTINUE
+          GO TO 2
+          ENTRY RIORDI(INFORM,IPUNT,N,NN,ISGN)
+          NS=NN
+2         IF(N.EQ.1) RETURN
+          IF(ISGN.NE.1) THEN
+          DO 5 I=1,N
+          J=IPUNT(I)
+          INFORM(J)=ISGN*INFORM(J)
+5         CONTINUE
+          ENDIF
+          NM1=N-1
+          K=0
+          DO 8 I=1,NM1
+          J1=IPUNT(I)
+          J2=IPUNT(I+1)
+          IF(INFORM(J1).GT.INFORM(J2)) K=K+1
+8         CONTINUE
+          IF(K.GT.NM1/2) THEN
+          N2=N/2
+          DO 10 I=1,N2
+          ISRV=IPUNT(I)
+          IPUNT(I)=IPUNT(N+1-I)
+          IPUNT(N+1-I)=ISRV
+10        CONTINUE
+          ENDIF
+          IF(K.NE.0.AND.K.NE.NM1) THEN
+          DO 15 I=N,1,-1
+          IPUNT(I+1)=IPUNT(I)
+15        CONTINUE
+          IPUNT(1)=NS+1
+          INFORM(NS+1)=-10000000
+          DO 18 I=2,N
+          J=I
+17        L1=IPUNT(J)
+          L2=IPUNT(J+1)
+          IF(INFORM(L1).LE.INFORM(L2)) GO TO 18
+          IPUNT(J)=L2
+          IPUNT(J+1)=L1
+          J=J-1
+          GO TO 17
+18        CONTINUE
+          DO 20 I=1,N
+          IPUNT(I)=IPUNT(I+1)
+20        CONTINUE
+          ENDIF
+          IF(ISGN.EQ.1) RETURN
+          DO 25 I=1,N
+          J=IPUNT(I)
+          INFORM(J)=ISGN*INFORM(J)
+25        CONTINUE
+          RETURN
+          END
+C******************************     RIDUCE
+      SUBROUTINE RIDUCE(JCRONA,JGRAFO,LIVELV,LIVELU,LIVELW,KOMPW,KARD,
+     .KOMP,KONTV,KONTU,KONTW,LIMAX,KAVMAX,KAUMAX,ISC,NN,N)
+      DIMENSION JCRONA(1),JGRAFO(1),LIVELV(1),LIVELU(1),LIVELW(1),
+     .KOMPW(1),KARD(1),KOMP(1),KONTV(1),KONTU(1),KONTW(1)
+      DO 10 I=1,N
+      LIVELU(I)=LIMAX+1-LIVELU(I)
+      LIVELW(I)=0
+   10 CONTINUE
+      IF(NN.LT.N) THEN
+      DO 15 I=1,N
+      IF(LIVELV(I).NE.0) GO TO 15
+      LIVELV(I)=LIMAX+1
+      LIVELU(I)=LIMAX+1
+   15 CONTINUE
+      ENDIF
+      DO 20 I=1,LIMAX+1
+      KONTW(I)=0
+   20 CONTINUE
+      IR=0
+      DO 40 I=1,N
+      IF(LIVELV(I).EQ.LIVELU(I)) THEN
+      IR=IR+1
+      LIV=LIVELV(I)
+      LIVELW(I)=LIV
+      KONTW(LIV)=KONTW(LIV)+1
+      ENDIF
+   40 CONTINUE
+      IF(IR.EQ.N) THEN
+      ISC=0
+      ELSE
+      ICO=0
+      DO 60 I=1,N
+      IF(LIVELW(I).EQ.0) THEN
+      ICO=ICO+1
+      LI0=100*ICO
+      CALL LIVEL(I,JCRONA,JGRAFO,LIVELW,KONTV,KONTU,LI0,LIW,KAMAX,
+     .NU,IR,N)
+      KARD(ICO)=IR
+      ENDIF
+   60 CONTINUE
+      CALL ORDINI(KARD,KONTV,ICO,-1)
+      CALL PUNTA(KONTV,KONTU,0,1,ICO,ICO)
+      DO 70 I=1,N
+      KO=LIVELW(I)/100
+      IF(KO.EQ.0) THEN
+      KOMPW(I)=0
+      ELSE
+      KOMPW(I)=KONTU(KO)
+      ENDIF
+   70 CONTINUE
+      CALL CLASSI(KOMPW,KARD,KOMP,N,ICO)
+      DO 140 I=1,ICO
+      DO 80 L=1,LIMAX
+      KONTV(L)=0
+      KONTU(L)=0
+   80 CONTINUE
+      K1=KARD(I)+1
+      K2=KARD(I+1)
+      DO 90 K=K1,K2
+      J=KOMP(K)
+      LIV=LIVELV(J)
+      LIU=LIVELU(J)
+      KONTV(LIV)=KONTV(LIV)+1
+      KONTU(LIU)=KONTU(LIU)+1
+   90 CONTINUE
+      KOVMAX=KONTW(1)+KONTV(1)
+      KOUMAX=KONTW(1)+KONTU(1)
+      DO 100 L=2,LIMAX
+      IF(KONTV(L).GT.0) KOVMAX=MAX0(KOVMAX,KONTW(L)+KONTV(L))
+      IF(KONTU(L).GT.0) KOUMAX=MAX0(KOUMAX,KONTW(L)+KONTU(L))
+  100 CONTINUE
+      IF(KOVMAX.LE.KOUMAX.OR.(KOVMAX.EQ.KOUMAX.AND.KAVMAX.LE.KAUMAX))
+     .THEN
+      DO 110 K=K1,K2
+      J=KOMP(K)
+      LIV=LIVELV(J)
+      KONTW(LIV)=KONTW(LIV)+1
+      LIVELW(J)=LIV
+  110 CONTINUE
+      IF(I.EQ.1) ISC=0
+      ELSE
+      DO 130 K=K1,K2
+      J=KOMP(K)
+      LIU=LIVELU(J)
+      KONTW(LIU)=KONTW(LIU)+1
+      LIVELW(J)=LIU
+  130 CONTINUE
+      IF(I.EQ.1) ISC=1
+      ENDIF
+  140 CONTINUE
+      ENDIF
+      RETURN
+      END
+C******************************     REVERS
+      SUBROUTINE REVERS(INDICI,KRIGA,NOME,NUMERO,IBANDA,JBANDA,
+     .MMAX,M,N,IT,JT)
+      DIMENSION INDICI(MMAX,1),KRIGA(1),NOME(1),NUMERO(1),
+     .IBANDA(1),JBANDA(1)
+      IF(IT.LE.JT) RETURN
+      N2=N/2
+      DO 5 I=1,N2
+      ISRV=NOME(I)
+      NOME(I)=NOME(N+1-I)
+      NOME(N+1-I)=ISRV
+    5 CONTINUE
+      DO 10 I=1,N
+      L=NUMERO(I)
+      NUMERO(I)=N+1-L
+   10 CONTINUE
+      DO 15 I=1,M
+      L=KRIGA(I)
+      DO 12 J=1,L
+      K=INDICI(I,J)
+      IF(K.LT.0) GO TO 12
+      INDICI(I,J)=N+1-K
+   12 CONTINUE
+   15 CONTINUE
+      DO 20 I=1,N
+      ISRV=IBANDA(I)
+      JSRV=JBANDA(N-I+1)
+      IBANDA(I)=JSRV
+      JBANDA(N-I+1)=ISRV
+   20 CONTINUE
+      KSRV=IT
+      IT=JT
+      JT=KSRV
+      RETURN
+      END
+C******************************     TRASPS
+      SUBROUTINE TRASPS(INDICI,KRIGA,ICRONA,IGRAFO,MMAX,M,N)
+      DIMENSION INDICI(MMAX,1),KRIGA(1),ICRONA(1),IGRAFO(1)
+      DO 1 I=1,N
+      ICRONA(I+1)=0
+    1 CONTINUE
+      ICRONA(1)=0
+      DO 5 I=1,M
+      L=KRIGA(I)
+      LL=1000000000
+      DO 2 J=1,L
+      LL=MIN0(LL,INDICI(I,J))
+    2 CONTINUE
+      IF(LL.LT.0) GO TO 5
+      DO 3 J=1,L
+      K=INDICI(I,J)
+      ICRONA(K+1)=ICRONA(K+1)+1
+    3 CONTINUE
+    5 CONTINUE
+      DO 10 I=1,N
+      ICRONA(I+1)=ICRONA(I)+ICRONA(I+1)
+   10 CONTINUE
+      DO 15 I=1,M
+      L=KRIGA(I)
+      LL=1000000000
+      DO 12 J=1,L
+      LL=MIN0(LL,INDICI(I,J))
+   12 CONTINUE
+      IF(LL.LT.0) GO TO 15
+      DO 13 J=1,L
+      K1=INDICI(I,J)
+      ICRONA(K1)=ICRONA(K1)+1
+      K2=ICRONA(K1)
+      IGRAFO(K2)=I
+   13 CONTINUE
+   15 CONTINUE
+      DO 20 I=N,1,-1
+      ICRONA(I+1)=ICRONA(I)
+   20 CONTINUE
+      ICRONA(1)=0
+      RETURN
+      END
+C******************************     WGRAFO
+      SUBROUTINE WGRAFO(NOME,GRAFO,CRONA,BANDI,BANDA,N,INIZIO)
+      INTEGER GRAFO,CRONA,BANDI,BANDA
+      CHARACTER*4 IFORM,INTERO,ICS 
+      DIMENSION NOME(1),GRAFO(1),CRONA(1),BANDI(1),BANDA(1),IFORM(23),
+     .ISRV(18)
+      DATA IFORM/'(5X,','2I5,','4X, ',18*'    ','4X, ','3I5)'/
+      INTERO='I5, '
+      ICS='5X, '
+      ILI=NOME(N+1)
+      IF(ILI.EQ.1) THEN
+      IF(INIZIO.EQ.0) WRITE(6,100)
+      IF(INIZIO.EQ.1) WRITE(6,110)
+      ELSE
+      IF(INIZIO.EQ.0) WRITE(6,101)
+      IF(INIZIO.EQ.1) WRITE(6,111)
+      ENDIF
+      DO 5 L=1,18
+      ISRV(L)=0
+    5 CONTINUE
+      DO 30 I=1,N
+      DO 10 J=1,18
+      IFORM(J+3)=ICS
+   10 CONTINUE
+      KRONA=CRONA(I+1)-CRONA(I)
+      INI=CRONA(I)+1-INIZIO
+      IFI=CRONA(I+1)-INIZIO
+      K=MIN0(KRONA,18)
+      DO 20 J=1,K
+      IFORM(J+3)=INTERO
+   20 CONTINUE
+      IFJ=MIN0(IFI,INI+17)
+      LL=IFJ-INI+1
+      DO 21 L=1,LL
+      ISRV(L)=GRAFO(INI+L-1)
+   21 CONTINUE
+      WRITE(6,IFORM) I,NOME(I),(ISRV(J),J=1,LL),KRONA,BANDI(I),BANDA(I)
+      J=0
+   25 J=J+1
+      DO 23 L=1,18
+      ISRV(L)=0
+   23 CONTINUE
+      INJ=INI+18*J
+      IF(INJ.GT.IFI) GO TO 30
+      IFJ=MIN0(IFI,INJ+17)
+      LL=IFJ-INJ+1
+      DO 28 L=1,LL
+      ISRV(L)=GRAFO(INJ+L-1)
+   28 CONTINUE
+      WRITE(6,120) (ISRV(K),K=1,LL)
+      GO TO 25
+   30 CONTINUE
+      RETURN
+  100 FORMAT(/////5X,'MATRICE DISEGNO SIMBOLICA',
+     .//,5X,'(NUMERO DI ORDINE E NOME DEL PUNTO - MISURE CORONA,',
+     .' CON TOTALE - BANDA INDIETRO E AVANTI)',/)
+  101 FORMAT(/////5X,'SYMBOLICAL DESIGN MATRIX',
+     .//,5X,'(ORDERING NUMBER AND NAME OF THE POINT - RING MEASURES,',
+     .' WITH TOTAL - FORWARD AND BACKWARD BANDWIDTHS)',/)
+  110 FORMAT(/////5X,'MATRICE NORMALE SIMBOLICA',
+     .//,5X,'(NUMERO DI ORDINE E NOME DEL PUNTO - PUNTI CORONA,',
+     .' CON TOTALE - BANDA INDIETRO E AVANTI)',/)
+  111 FORMAT(/////5X,'SYMBOLICAL NORMAL MATRIX',
+     .//,5X,'(ORDERING NUMBER AND NAME OF THE POINT - RING POINTS,',
+     .' WITH TOTAL - FORWARD AND BACKWARD BANDWIDTHS)',/)
+  120 FORMAT(19X,18I5)
+      END

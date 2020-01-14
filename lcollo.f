@@ -1,0 +1,429 @@
+          CHARACTER*1 ILI,ICASO,ITIPO,ISCRI,IFILE,IMATRI,TOLL,
+     .IN1,IN2,OT10,OT11,OT12,F1,F2,F10,F11,F12,VIR,AS
+          CHARACTER*4 TITOLO,FORMA
+          CHARACTER*30 LANCIO 
+          DIMENSION TITOLO(20),FORMA(20),TOLL(10),IN1(60),IN2(60), 
+     .OT10(60),OT11(60),OT12(60),F1(6),F2(6),F10(6),F11(6),F12(6),AS(6)
+          DATA AS/'$',' ','a','s','s',' '/
+          DATA F1/'F','O','R','0','0','1'/
+          DATA F2/'f','o','r','0','0','2'/
+          DATA F10/'F','O','R','0','1','0'/
+          DATA F11/'F','O','R','0','1','1'/
+          DATA F12/'F','O','R','0','1','2'/
+          DATA VIR/','/
+          SCX=0.D0 
+          SCY=0.D0 
+          SCT=0.D0 
+          SCU=0.D0 
+          SCV=0.D0 
+          SCW=0.D0
+1         WRITE(6,1200)
+          READ(*,1004,ERR=1) ILI
+          WRITE(6,'(///)')
+          IF(ILI.EQ.'1') THEN
+          WRITE(*,1175)
+          READ(*,'(A)') LANCIO
+          OPEN(3,FILE=LANCIO,STATUS='UNKNOWN') 
+          WRITE(*,1170)
+          READ(*,'(60A1)') IN1 
+          WRITE(*,1180)
+          READ(*,'(60A1)') IN2 
+          WRITE(*,1000)
+          READ(*,1005) TITOLO  
+10        WRITE(*,1010)
+          READ(*,1004,ERR=10) ICASO
+20        WRITE(*,1020)
+          READ(*,1004,ERR=20) ITIPO
+          IF(ICASO.EQ.'1') THEN
+30        WRITE(*,1030)
+          READ(*,1004,ERR=30) ISCRI
+40        WRITE(*,1040)
+          READ(*,1004,ERR=40) IFILE
+50        WRITE(*,1045)
+          READ(*,1004,ERR=50) IMATRI  
+60        WRITE(*,1050)
+          READ(*,1003,ERR=60) TOLL
+          IF(ITIPO.EQ.'1') THEN
+70        WRITE(*,1060)
+          READ(*,*,ERR=70) SCT,SCU
+          ENDIF
+          IF(ITIPO.EQ.'2') THEN
+80        WRITE(*,1070)
+          READ(*,*,ERR=80) SCT,SCU,SCV
+          ENDIF
+          IF(ITIPO.EQ.'3') THEN
+90        WRITE(*,1080)
+          READ(*,*,ERR=90) SCT,SCU,SCV,SCW
+          ENDIF
+          WRITE(*,1090)
+          READ(*,1005) FORMA
+          ENDIF
+          IF(ICASO.EQ.'2') THEN
+100       WRITE(*,1030)
+          READ(*,1004,ERR=100) ISCRI
+110       WRITE(*,1100)
+          READ(*,1004,ERR=110) ITABLE  
+120       WRITE(*,1040)
+          READ(*,1004,ERR=120) IFILE
+130       WRITE(*,1045)
+          READ(*,1004,ERR=130) IMATRI  
+140       WRITE(*,1110)
+          READ(*,1004,ERR=140) IQUO
+150       WRITE(*,1120)
+          READ(*,1004,ERR=150) IORDI
+160       WRITE(*,1050)
+          READ(*,1003,ERR=160) TOLL
+          IF(ITIPO.EQ.'1') THEN
+170       WRITE(*,1130)
+          READ(*,*,ERR=170) SCX,SCY,SCU
+          ENDIF
+          IF(ITIPO.EQ.'2') THEN
+180       WRITE(*,1140,ERR=180)
+          READ(*,*) SCX,SCY,SCU,SCV
+          ENDIF
+          IF(ITIPO.EQ.'3') THEN
+190       WRITE(*,1150)
+          READ(*,*,ERR=190) SCX,SCY,SCU,SCV,SCW
+          ENDIF
+          WRITE(*,1090)
+          READ(*,1005) FORMA
+          ENDIF
+          IF(ICASO.EQ.'3') THEN
+200       WRITE(*,1030)
+          READ(*,1004,ERR=200) ISCRI
+210       WRITE(*,1100)
+          READ(*,1004,ERR=210) ITABLE  
+220       WRITE(*,1040)
+          READ(*,1004,ERR=220) IFILE
+230       WRITE(*,1045)
+          READ(*,1004,ERR=230) IMATRI  
+240       WRITE(*,1120)
+          READ(*,1004,ERR=240) IORDI
+          WRITE(*,1050)
+250       READ(*,1003,ERR=250) TOLL
+          IF(ITIPO.EQ.'1') THEN
+260       WRITE(*,1135)
+          READ(*,*,ERR=260) SCX,SCY,SCZ,SCU
+          ENDIF
+          IF(ITIPO.EQ.'2') THEN
+270       WRITE(*,1145)
+          READ(*,*,ERR=270) SCX,SCY,SCZ,SCU,SCV
+          ENDIF
+          IF(ITIPO.EQ.'3') THEN
+280       WRITE(*,1155)
+          READ(*,*,ERR=280) SCX,SCY,SCZ,SCU,SCV,SCW
+          ENDIF
+          WRITE(*,1090)
+          READ(*,1005) FORMA
+          ENDIF
+          IF(IFILE.EQ.'1') THEN
+          WRITE(*,1190)
+          READ(*,'(60A1)') OT10
+          WRITE(*,1195)
+          READ(*,'(60A1)') OT11
+          ENDIF
+          IF(IMATRI.EQ.'1') THEN
+          WRITE(*,1198)
+          READ(*,'(60A1)') OT12
+          ENDIF
+          ELSE
+          WRITE(*,2175)
+          READ(*,'(A)') LANCIO
+          OPEN(3,FILE=LANCIO,STATUS='UNKNOWN') 
+          WRITE(*,2170)
+          READ(*,'(60A1)') IN1 
+          WRITE(*,2180)
+          READ(*,'(60A1)') IN2 
+          WRITE(*,2000)
+          READ(*,1005) TITOLO  
+310       WRITE(*,2010)
+          READ(*,1004,ERR=310) ICASO
+320       WRITE(*,2020)
+          READ(*,1004,ERR=320) ITIPO
+          IF(ICASO.EQ.'1') THEN
+330       WRITE(*,2030)
+          READ(*,1004,ERR=330) ISCRI
+340       WRITE(*,2040)
+          READ(*,1004,ERR=340) IFILE
+350       WRITE(*,2045)
+          READ(*,1004,ERR=350) IMATRI  
+360       WRITE(*,2050)
+          READ(*,1003,ERR=360) TOLL
+          IF(ITIPO.EQ.'1') THEN
+370       WRITE(*,2060)
+          READ(*,*,ERR=370) SCT,SCU
+          ENDIF
+          IF(ITIPO.EQ.'2') THEN
+380       WRITE(*,2070)
+          READ(*,*,ERR=380) SCT,SCU,SCV
+          ENDIF
+          IF(ITIPO.EQ.'3') THEN
+390       WRITE(*,2080)
+          READ(*,*,ERR=390) SCT,SCU,SCV,SCW
+          ENDIF
+          WRITE(*,2090)
+          READ(*,1005) FORMA
+          ENDIF
+          IF(ICASO.EQ.'2') THEN
+400       WRITE(*,2030)
+          READ(*,1004,ERR=400) ISCRI
+410       WRITE(*,2100)
+          READ(*,1004,ERR=410) ITABLE  
+420       WRITE(*,2040)
+          READ(*,1004,ERR=420) IFILE
+430       WRITE(*,2045)
+          READ(*,1004,ERR=430) IMATRI  
+440       WRITE(*,2110)
+          READ(*,1004,ERR=440) IQUO
+450       WRITE(*,2120)
+          READ(*,1004,ERR=450) IORDI
+460       WRITE(*,2050)
+          READ(*,1003,ERR=460) TOLL
+          IF(ITIPO.EQ.'1') THEN
+470       WRITE(*,2130)
+          READ(*,*,ERR=170) SCX,SCY,SCU
+          ENDIF
+          IF(ITIPO.EQ.'2') THEN
+480       WRITE(*,2140,ERR=480)
+          READ(*,*) SCX,SCY,SCU,SCV
+          ENDIF
+          IF(ITIPO.EQ.'3') THEN
+490       WRITE(*,2150)
+          READ(*,*,ERR=490) SCX,SCY,SCU,SCV,SCW
+          ENDIF
+          WRITE(*,2090)
+          READ(*,1005) FORMA
+          ENDIF
+          IF(ICASO.EQ.'3') THEN
+500       WRITE(*,2030)
+          READ(*,1004,ERR=500) ISCRI
+510       WRITE(*,2100)
+          READ(*,1004,ERR=510) ITABLE  
+520       WRITE(*,2040)
+          READ(*,1004,ERR=520) IFILE
+530       WRITE(*,2045)
+          READ(*,1004,ERR=530) IMATRI  
+540       WRITE(*,2120)
+          READ(*,1004,ERR=540) IORDI
+          WRITE(*,2050)
+550       READ(*,1003,ERR=550) TOLL
+          IF(ITIPO.EQ.'1') THEN
+560       WRITE(*,2135)
+          READ(*,*,ERR=560) SCX,SCY,SCZ,SCU
+          ENDIF
+          IF(ITIPO.EQ.'2') THEN
+570       WRITE(*,2145)
+          READ(*,*,ERR=570) SCX,SCY,SCZ,SCU,SCV
+          ENDIF
+          IF(ITIPO.EQ.'3') THEN
+580       WRITE(*,2155)
+          READ(*,*,ERR=580) SCX,SCY,SCZ,SCU,SCV,SCW
+          ENDIF
+          WRITE(*,2090)
+          READ(*,1005) FORMA
+          ENDIF
+          IF(IFILE.EQ.'1') THEN
+          WRITE(*,2190)
+          READ(*,'(60A1)') OT10
+          WRITE(*,2195)
+          READ(*,'(60A1)') OT11
+          ENDIF
+          IF(IMATRI.EQ.'1') THEN
+          WRITE(*,2198)
+          READ(*,'(60A1)') OT12
+          ENDIF
+          ENDIF
+          I1=LUNG(IN1) 
+          I2=LUNG(IN2) 
+          DO 610 I=I1,1,-1  
+          IN1(I+6)=IN1(I)  
+610       CONTINUE 
+          DO 620 I=I2,1,-1  
+          IN2(I+6)=IN2(I)  
+620       CONTINUE 
+          DO 630 I=1,6  
+          IN1(I)=AS(I)
+          IN2(I)=AS(I)
+630       CONTINUE 
+          DO 635 I=1,6
+          IN1(I+I1+7)=F1(I)
+          IN2(I+I2+7)=F2(I)
+635       CONTINUE
+          IF(IFILE.EQ.'1') THEN
+          I1=LUNG(OT10)
+          DO 640 I=I1,1,-1  
+          OT10(I+6)=OT10(I)
+640       CONTINUE 
+          DO 650 I=1,6  
+          OT10(I)=AS(I)
+650       CONTINUE 
+          DO 655 I=1,6
+          OT10(I+I1+7)=F10(I)
+655       CONTINUE
+          I1=LUNG(OT11)
+          DO 660 I=I1,1,-1  
+          OT11(I+6)=OT11(I)
+660       CONTINUE 
+          DO 670 I=1,6  
+          OT11(I)=AS(I)
+670       CONTINUE 
+          DO 675 I=1,6
+          OT11(I+I1+7)=F11(I)
+675       CONTINUE
+          IF(IMATRI.EQ.'1') THEN
+          I1=LUNG(OT12)
+          DO 680 I=I1,1,-1  
+          OT12(I+6)=OT12(I)
+680       CONTINUE 
+          DO 690 I=1,6  
+          OT12(I)=AS(I)
+690       CONTINUE 
+          DO 700 I=1,6
+          OT12(I+I1+7)=F12(I)
+700       CONTINUE
+          WRITE(3,'(60A1)') OT12
+          ENDIF
+          WRITE(3,'(60A1)') OT10
+          WRITE(3,'(60A1)') OT11
+          ENDIF
+          WRITE(3,'(60A1)') IN1
+          WRITE(3,'(60A1)') IN2
+          IF(ICASO.EQ.'1') THEN
+          WRITE(3,1006) ILI
+          WRITE(3,'(20A4)') TITOLO 
+          WRITE(3,1006) ICASO,VIR,ITIPO
+          WRITE(3,1006) ISCRI,VIR,IFILE,VIR,IMATRI,VIR,TOLL
+          WRITE(3,*) SCT,SCU,SCV,SCW
+          WRITE(3,'(20A4)') FORMA  
+          ENDIF
+          IF(ICASO.EQ.'2') THEN
+          WRITE(3,1006) ILI
+          WRITE(3,'(20A4)') TITOLO 
+          WRITE(3,1006) ICASO,VIR,ITIPO
+          WRITE(3,1006) ISCRI,VIR,ITABLE,VIR,IFILE,VIR,IMATRI,VIR,IQUO,
+     .VIR,IORDI,VIR,TOLL
+          WRITE(3,*) SCX,SCY,SCU,SCV,SCW
+          WRITE(3,'(20A4)') FORMA  
+          ENDIF
+          IF(ICASO.EQ.'3') THEN
+          WRITE(3,1006) ILI
+          WRITE(3,'(20A4)') TITOLO 
+          WRITE(3,1006) ICASO,VIR,ITIPO
+          WRITE(3,1006) ISCRI,VIR,ITABLE,VIR,IFILE,VIR,IMATRI,
+     .VIR,IORDI,VIR,TOLL
+          WRITE(3,*) SCX,SCY,SCZ,SCU,SCV,SCW
+          WRITE(3,'(20A4)') FORMA  
+          ENDIF
+          IF(ILI.EQ.'1') THEN
+          WRITE(*,1220) LANCIO
+          ELSE
+          WRITE(*,2220) LANCIO
+          ENDIF
+          CLOSE(3)
+          STOP 
+1000      FORMAT(5X,'TITOLO')  
+1003      FORMAT(10A1) 
+1004      FORMAT(A1)
+1005      FORMAT(20A4) 
+1006      FORMAT(80A1) 
+1010      FORMAT(5X,'CASO:'/15X,'UNIDIMENSIONALE = 1'  
+     ./15X,'BIDIMENSIONALE  = 2'/15X,'TRIDIMENSIONALE = 3')  
+1020      FORMAT(5X,'TIPO:'/15X,'UNA COMPONENTE = 1'
+     ./15X,'DUE COMPONENTI = 2'
+     ./15X,'TRE COMPONENTI = 3')
+1030      FORMAT(5X,'ISCRI:'/15X,'SCRIVE DATI INPUT = 1'
+     ./15X,'NON SCRIVE DATI INPUT = 0')
+1040      FORMAT(5X,'IFILE:'/15X,'SALVA SOLUZIONE E RISULTATI = 1'
+     .,5X,'(DATI OUTPUT FILES 10. E 11.)'  
+     ./15X,'NON SCRIVE SOLUZIONE E RISULTATI = 0') 
+1045      FORMAT(5X,'IMATRI:'/15X,'SALVA MATRICE DI COVARIANZA = 1',  
+     .5X,'(DATI OUTPUT FILE 12.)', 
+     ./15X,'NON SCRIVE MATRICE DI COVARIANZA = 0') 
+1050      FORMAT(5X,'TOLL:'/15X,'VALORE CRITICO PER LA REIEZIONE ' 
+     .'DEGLI ERRORI GROSSOLANI')
+1060      FORMAT(5X,'SCALE:'/15X,'SCALA TEMPO T'
+     ./15X,'SCALA COMPONENTE W')
+1070      FORMAT(5X,'SCALE:'/15X,'SCALA TEMPO T'
+     ./15X,'SCALE COMPONENTI U V')
+1080      FORMAT(5X,'SCALE:'/15X,'SCALE TEMPO T'
+     ./15X,'SCALE COMPONENTI U V W')
+1090      FORMAT(5X,'FORMATO DATI INPUT')  
+1100      FORMAT(5X,'TABLE:'/15X,'SCRIVE NUMERAZIONE E TABELLA '
+     .'CONNESSIONI = 1'
+     ./15X,'NON SCRIVE NUMERAZIONE E TABELLA CONNESSIONI = 0') 
+1110      FORMAT(5X,'IQUO:'/15X,'PRESENZA QUOTE = 1'
+     ./15X,'ASSENZA QUOTE  = 0')
+1120      FORMAT(5X,'IORDI:'/15X,'UTILIZZA ALGORITMO DI RIORDINO = 1'  
+     ./15X,'NON UTILIZZA ALGORITMO DI RIORDINO = 0')
+1130      FORMAT(5X,'SCALE:'/15X,'SCALE COORDINATE X Y'
+     ./15X,'SCALA COMPONENTE W')
+1135      FORMAT(5X,'SCALE:'/15X,'SCALE COORDINATE X Y Z'
+     ./15X,'SCALA COMPONENTE W')
+1140      FORMAT(5X,'SCALE:'/15X,'SCALE COORDINATE X Y'
+     ./15X,'SCALE COMPONENTI U V')
+1145      FORMAT(5X,'SCALE:'/15X,'SCALE COORDINATE X Y Z'
+     ./15X,'SCALE COMPONENTI U V') 
+1150      FORMAT(5X,'SCALE:'/15X,'SCALE COORDINATE X Y'
+     ./15X,'SCALE COMPONENTI U V W')
+1155      FORMAT(5X,'SCALE:'/15X,'SCALE COORDINATE X Y Z'
+     ./15X,'SCALE COMPONENTI U V W')
+1170      FORMAT(5X,'NOME FILE DATI ')
+1175      format(5x,'NOME FILE LANCIO ') 
+1180      FORMAT(5X,'NOME FILE PARAMETRI') 
+1190      FORMAT(5X,'NOME FILE OUTPUT (SOLUZIONE)')
+1195      FORMAT(5X,'NOME FILE OUTPUT (RISULTATI)')
+1198      FORMAT(5X,'NOME FILE OUTPUT (MATRICE DI COVARIANZA)')
+1200      FORMAT(///5X,'ITALIANO (ITALIAN): 1'
+     ./5X,'(INGLESE) ENGLISH:  0')
+1220      FORMAT(5X,'IL LANCIO SI TROVA SUL FILE ',A30)  
+2000      FORMAT(5X,'TITLE')  
+2010      FORMAT(5X,'CASE:'/15X,'ONEDIMENSIONAL   = 1'  
+     ./15X,'TWODIMENSIONAL   = 2'/15X,'THREEDIMENSIONAL = 3')  
+2020      FORMAT(5X,'TYPE:'/15X,'ONE COMPONENT    = 1'
+     ./15X,'TWO COMPONENTS   = 2'
+     ./15X,'THREE COMPONENTS = 3')
+2030      FORMAT(5X,'ISCRI:'/15X,'PRINT INPUT DATA = 1'
+     ./15X,'NO PRINT INPUT DATA = 0')
+2040      FORMAT(5X,'IFILE:'/15X,'SAVE RESULTS AND SOLUTION = 1'
+     .,5X,'(OUTPUT DATA ON FILES 10. AND 11.)'  
+     ./15X,'NO SAVE RESULTS AND SOLUTION = 0') 
+2045      FORMAT(5X,'IMATRI:'/15X,'SAVE COVARIANCE MATRIX = 1',  
+     .5X,'(OUTPUT DATA ON FILE 12.)', 
+     ./15X,'NO SAVE COVARIANCE MATRIX = 0') 
+2050      FORMAT(5X,'TOLL:'/15X,'CRITICAL VALUE FOR OUTLIER ' 
+     .'REJECTION')
+2060      FORMAT(5X,'SCALE:'/15X,'SCALE OF THE TIME'
+     ./15X,'SCALE OF W COMPONENTE')
+2070      FORMAT(5X,'SCALE:'/15X,'SCALE OF THE TIME'
+     ./15X,'SCALES OF U V COMPONENTS')
+2080      FORMAT(5X,'SCALE:'/15X,'SCALE OF THE TIME'
+     ./15X,'SCALES OF U V W COMPONENTS')
+2090      FORMAT(5X,'FORMAT OF INPUT DATA')  
+2100      FORMAT(5X,'TABLE:'/15X,'PRINT POINT CODE AND TABLE = 1'
+     ./15X,'NO PRINT POINT CODE AND TABLE = 0') 
+2110      FORMAT(5X,'IQUO:'/15X,'HEIGHTS = 1'
+     ./15X,'NO HEIGHTS  = 0')
+2120      FORMAT(5X,'IORDI:'/15X,'USE OF REORDERING ALGORITHM = 1'  
+     ./15X,'NO USE OF REORDERING ALGORITHM = 0')
+2130      FORMAT(5X,'SCALE:'/15X,'SCALES OF X Y COORDINATES'
+     ./15X,'SCALE OF W COMPONENT')
+2135      FORMAT(5X,'SCALE:'/15X,'SCALES OF X Y Z COORDINATES'
+     ./15X,'SCALE OF W COMPONENT')
+2140      FORMAT(5X,'SCALE:'/15X,'SCALES OF X Y COORDINATES'
+     ./15X,'SCALES OF U V COMPONENTS')
+2145      FORMAT(5X,'SCALE:'/15X,'SCALES OF X Y Z COORDINATES'
+     ./15X,'SCALES OF U V COMPONENTS') 
+2150      FORMAT(5X,'SCALE:'/15X,'SCALES OF X Y COORDINATES'
+     ./15X,'SCALES OF U V W COMPONENTS')
+2155      FORMAT(5X,'SCALE:'/15X,'SCALES OF X Y Z COORDINATES'
+     ./15X,'SCALES OF U V W COMPONENTS')
+2170      FORMAT(5X,'NAME OF THE DATA FILE')
+2175      format(5x,'NAME OF THE INSTRUCTION FILE') 
+2180      FORMAT(5X,'NAME OF THE PARAMETER FILE') 
+2190      FORMAT(5X,'NAME OF THE OUTPUT FILE (SOLUTION)')
+2195      FORMAT(5X,'NAME OF THE OUTPUT FILE (RESULTS)')
+2198      FORMAT(5X,'NAME OF THE OUTPUT FILE (COVARIANCE MATRIX)')
+2200      FORMAT(///5X,'ITALIANO (ITALIAN): 1'
+     ./5X,'(INGLESE) ENGLISH:  0')
+2220      FORMAT(5X,'INSTRUCTION FILE ON FILE ',A30)  
+          END  
