@@ -6,7 +6,7 @@
           DFN01=.5D0+.5D0*SRV*Z/DABS(Z)  
           RETURN
           END  
-C*************************    ERFREC RECIPES
+C*************************   ERFREC RECIPES
       FUNCTION ERFREC(X)
       IF(X.LT.0.)THEN
         ERFREC=-GAMMP(.5,X**2)
