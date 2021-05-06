@@ -1,4 +1,4 @@
-C*************************          ABINRY          *************************
+C*************************         ABINRY          *************************
           SUBROUTINE ABINRY(VALORE,HNFORM,IPUNT,NMAX,LNINF,LNSUP,
      .    LPINF,LPSUP,N)
           IMPLICIT DOUBLE PRECISION(A-H,O-Z)
