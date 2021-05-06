@@ -1,4 +1,4 @@
-sHELL	      = /bin/tcsh
+SHELL	      = /bin/tcsh
 
 FC	      = gfortran
 CFLAGS	      = -O2 
